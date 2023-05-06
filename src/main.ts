@@ -43,7 +43,7 @@ async function bootstrap() {
   app.enableCors();
 
   const port = Number(process.env.PORT) || 3002;
-  const hostname = process.env.HOSTNAME || 'localhost';
+  const hostname = process.env.HOSTNAME || '18.140.70.28';
   await app.listen(port, hostname, () => {
     const address =
       'http' + (ssl ? 's' : '') + '://' + hostname + ':' + port + '/';
