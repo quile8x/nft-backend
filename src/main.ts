@@ -44,11 +44,13 @@ async function bootstrap() {
 
   const port = Number(process.env.PORT) || 3002;
   const hostname = process.env.HOSTNAME || '18.140.70.28';
-  await app.listen(port, hostname, () => {
-    const address =
-      'http' + (ssl ? 's' : '') + '://' + hostname + ':' + port + '/';
-    Logger.log('Listening at ' + address);
-  });
+  await app.listen(3002);
+
+  // await app.listen(port, hostname, () => {
+  //   const address =
+  //     'http' + (ssl ? 's' : '') + '://' + hostname + ':' + port + '/';
+  //   Logger.log('Listening at ' + address);
+  // });
 
 
 }
