@@ -11,9 +11,9 @@ import * as path from 'path';
 // const certPath = './../dev.local+1-key.pem'
 
 async function bootstrap() {
-  // const app = await NestFactory.create(AppModule);
-  // app.enableCors();
-  // await app.listen(3002);
+  const app = await NestFactory.create(AppModule);
+  app.enableCors();
+  await app.listen(3002);
 
 
   // // http://localhost:3002/
@@ -45,8 +45,8 @@ async function bootstrap() {
     };
   }
 
-  const app = await NestFactory.create(AppModule, { httpsOptions });
-  app.enableCors();
+  // const app = await NestFactory.create(AppModule, { httpsOptions });
+  // app.enableCors();
 
   const port = Number(process.env.PORT) || 3002;
   const hostname = process.env.HOSTNAME || '18.140.70.28';
