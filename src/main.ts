@@ -48,9 +48,9 @@ async function bootstrap() {
   // const app = await NestFactory.create(AppModule, { httpsOptions });
   // app.enableCors();
 
-  const port = Number(process.env.PORT) || 3002;
-  const hostname = process.env.HOSTNAME || '18.140.70.28';
-  await app.listen(3002);
+  // const port = Number(process.env.PORT) || 3002;
+  // const hostname = process.env.HOSTNAME || '18.140.70.28';
+  // await app.listen(3002);
 
   // await app.listen(port, hostname, () => {
   //   const address =
