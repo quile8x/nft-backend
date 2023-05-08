@@ -5,13 +5,34 @@ import { AppModule } from './app.module';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 // const key = './../dev.local+1-key.pem';
 
 // const certPath = './../dev.local+1-key.pem'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+ // const app = await NestFactory.create(AppModule);
+
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+  );
+
+  //app.useStaticAssets(join(__dirname, '..', 'public'));
+
+    //  useStaticAssets(join(__dirname, '../views/public'), {
+    //   index: false,
+    //   redirect: false
+    // })
+
+  //app.useStaticAssets(join(__dirname, '..', 'public'));
+
+  // app.useStaticAssets(join(__dirname, '../public'), {
+  //   index: false,
+  //   redirect: false
+  // })
+
   app.enableCors();
   await app.listen(3002);
 
