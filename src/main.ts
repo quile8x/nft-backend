@@ -49,22 +49,22 @@ async function bootstrap() {
 
 
 
-  const ssl = true;//process.env.SSL === 'true' ? true : false;
-  let httpsOptions = null;
-  if (ssl) {
-    const keyPath = './../dev.local+1-key.pem' || '';
-    const certPath = './../dev.local+1.pem' || '';
+  // const ssl = true;//process.env.SSL === 'true' ? true : false;
+  // let httpsOptions = null;
+  // if (ssl) {
+  //   const keyPath = './../dev.local+1-key.pem' || '';
+  //   const certPath = './../dev.local+1.pem' || '';
 
-    // const keyPath = './../privkey.pem' || '';
-    // const certPath = './../fullchain.pem' || '';
+  //   // const keyPath = './../privkey.pem' || '';
+  //   // const certPath = './../fullchain.pem' || '';
 
 
   
-    httpsOptions = {
-      key: fs.readFileSync(path.join(__dirname, keyPath)),
-      cert: fs.readFileSync(path.join(__dirname, certPath)),
-    };
-  }
+  //   httpsOptions = {
+  //     key: fs.readFileSync(path.join(__dirname, keyPath)),
+  //     cert: fs.readFileSync(path.join(__dirname, certPath)),
+  //   };
+  // }
 
   // const app = await NestFactory.create(AppModule, { httpsOptions });
   // app.enableCors();
