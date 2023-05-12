@@ -10,11 +10,14 @@ import { BrandModule } from './brand/brand.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { resolve } from 'path';
-
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/nest'),
+    ConfigModule.forRoot({ envFilePath: `${process.env.NODE_ENV}.env` }), 
+    MongooseModule.forRoot(`${process.env.DB_MONGO}`),
     WalletContractModule,
     GifNftModule,
     GiftModule,
@@ -29,7 +32,6 @@ import { resolve } from 'path';
     }),
     ServeStaticModule.forRoot(
       (() => {
-
           const servePath = '/.well-known/pki-validation';
           return {
               //rootPath: publicDir,
@@ -41,6 +43,8 @@ import { resolve } from 'path';
           };
       })()
   ),
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

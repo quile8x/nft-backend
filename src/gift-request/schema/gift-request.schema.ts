@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type GiftRequestDocument = GiftRequest & Document;
 
-@Schema()
+@Schema({ collection: 'gift-request' })
 export class GiftRequest {
   @Prop({ required: true })
   name: string;

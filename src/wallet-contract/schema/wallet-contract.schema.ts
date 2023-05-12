@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type WalletContractDocument = WalletContract & Document;
 
-@Schema()
+@Schema({ collection: 'wallet-contract' })
 export class WalletContract {
   @Prop({ required: true })
   walletAddress: string;
