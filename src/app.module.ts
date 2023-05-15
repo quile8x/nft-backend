@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthMiddleware } from './middlewares/auth/auth.middleware';
+import { LoggerMiddleware } from './middlewares/log/logger.middleware';
 
 @Module({
   imports: [

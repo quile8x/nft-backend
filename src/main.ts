@@ -2,11 +2,11 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-
 import * as fs from 'fs';
 import * as path from 'path';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { logger } from './middlewares/log/logger.middleware';
 
 // const key = './../dev.local+1-key.pem';
 
@@ -34,6 +34,7 @@ async function bootstrap() {
   // })
 
   app.enableCors();
+  app.use(logger);
   await app.listen(3002);
 
 
