@@ -1,1 +1,32 @@
-export class Brand {}
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToMany } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+
+@Entity()
+export class Brand {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ nullable: true })
+  brandId?: string;
+
+  @Column({ nullable: true })
+  brandName?: string;
+
+  @Column({ nullable: true })
+  brandLogoUrl?: string;
+
+  // @Column({ nullable: true })
+  // userId?: string;
+
+  @OneToOne(type => User) @JoinColumn() 
+  user: User
+
+
+  @Column({ nullable: true })
+  createdAt?: Date;
+
+   @Column({ nullable: true })
+  upatedAt?: Date;
+
+}
+

@@ -4,7 +4,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AccessTokenGuard } from '../common/guards/accessToken.guard';
 import { Logger } from '@nestjs/common';
+import { hash } from 'argon2';
 
+
+ class RequestLoginDTO {
+  wallet?: string;
+}
+
+class LoginDTO {
+  wallet?: string;
+  hash?: string;
+}
 
 @Controller('user')
 export class UserController {
@@ -14,26 +24,35 @@ export class UserController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
-
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @Post("getLoyaltyUser")
+  getLoyaltyUser(@Body() loginDTO: LoginDTO) {
+    return this.userService.getLoyaltyUser(loginDTO.wallet, loginDTO.hash);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findById(id);
+  @Post("request-login")
+  requestlogin(@Body() requestLoginDTO: RequestLoginDTO) {
+    return this.userService.requesLoyaltyLogin(requestLoginDTO.wallet);
   }
 
-  @UseGuards(AccessTokenGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
-  }
+//   @Get()
+//   findAll() {
+//     return this.userService.findAll();
+//   }
 
-  @UseGuards(AccessTokenGuard)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
-  }
-}
+//   @Get(':id')
+//   findOne(@Param('id') id: string) {
+//     return this.userService.findById(id);
+//   }
+
+//   @UseGuards(AccessTokenGuard)
+//   @Patch(':id')
+//   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+//     return this.userService.update(id, updateUserDto);
+//   }
+
+//   @UseGuards(AccessTokenGuard)
+//   @Delete(':id')
+//   remove(@Param('id') id: string) {
+//     return this.userService.remove(id);
+//   }
+ }

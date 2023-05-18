@@ -1,4 +1,13 @@
 export class AuthDto {
-    username: string;
-    password: string;
+    walletAddress: string;
+    nonce: string;
   }
+
+export class RequestLoginDTO {
+  wallet?: string;
+}
+
+export class LoginDTO {
+  wallet?: string;
+  hash?: string;
+}

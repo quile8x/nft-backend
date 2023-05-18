@@ -7,19 +7,31 @@ import {
   Post,
   Req,
   UseGuards,
+  Logger
 } from '@nestjs/common';
 import { Request } from 'express';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDto, LoginDTO, RequestLoginDTO } from './dto/auth.dto';
 import { AccessTokenGuard } from '../common/guards/accessToken.guard';
 import { RefreshTokenGuard } from '../common/guards/refreshToken.guard'
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, ) { }
+
+  @Post("login")
+  getLoyaltyUser(@Body() loginDTO: LoginDTO) {
+    return this.authService.getLoyaltyUser(loginDTO.wallet, loginDTO.hash);
+  }
+
+  @Post("request-login")
+  requestlogin(@Body() requestLoginDTO: RequestLoginDTO) {
+    return this.authService.requesLoyaltyLogin(requestLoginDTO.wallet);
+  }
 
   @Post('signup')
   signup(@Body() createUserDto: CreateUserDto) {
+    Logger.log("newUser===================", createUserDto);
     return this.authService.signUp(createUserDto);
   }
 
@@ -35,10 +47,10 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
-@Get('refresh')
-refreshTokens(@Req() req: Request) {
-  const userId = req.user['sub'];
-  const refreshToken = req.user['refreshToken'];
-  return this.authService.refreshTokens(userId, refreshToken);
-}
+  @Get('refresh')
+  refreshTokens(@Req() req: Request) {
+    const userId = req.user['sub'];
+    const refreshToken = req.user['refreshToken'];
+    return this.authService.refreshTokens(userId, refreshToken);
+  }
 }

@@ -13,8 +13,8 @@ export class LoggerMiddleware implements NestMiddleware {
   export function logger(req: Request, res: Response, next: NextFunction) {
     console.log(`Request`, req.body);
     res.on('finish', () => {
-        const { statusCode, data } = res;
-        console.log(`Response:`,statusCode, data );
+        const { statusCode,   } = res;
+        console.log(`Response:`,statusCode);
       });
      
     //   res.on('close', () => {
