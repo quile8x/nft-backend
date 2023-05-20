@@ -4,50 +4,84 @@ import { Repository } from 'typeorm';
 import { Membership } from './entities/membership.entity';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
+import axios from "axios";
 
 
 @Injectable()
 export class MembershipService {
-  // constructor(
-  //   @InjectRepository(Membership)
-  //   private membershipRepository: Repository<Membership>
-  // ) { }
+  constructor(
+    @InjectRepository(Membership)
+    private membershipRepository: Repository<Membership>
+  ) { }
 
-  // async getByEmail(email: string) {
-  //   const user = await this.membershipRepository.findOneBy({ email: email });
-  //   if (user) {
-  //     return user;
-  //   }
-  //   throw new HttpException('User with this email does not exist ', HttpStatus.NOT_FOUND);
-  // }
+  public async create(createMembershipDto: CreateMembershipDto) {
+    const membership = await this.membershipRepository.create(createMembershipDto);
+    await this.membershipRepository.save(membership);
+    return membership;
+  }
 
-  // async getByID(userId: string) {
-  //   const user = await this.membershipRepository.findOneBy({ membershipId: membershipId });
-  //   if (user) {
-  //     return user;
-  //   }
-  //   throw new HttpException('User with this user ID does not exist', HttpStatus.NOT_FOUND);
-  // }
+  async getListLoyaltyMembership(token: string) {
 
 
-  // async create(userData: CreateMembershipDto) {
-  //   const newUser = await this.usersRepository.create(userData);
-  //   Logger.log("userData===============",newUser);
-  //   await this.usersRepository.save(newUser);
-  //   return newUser;
-  // }
+ 
 
-  // async update(
-  //   userId,
-  //   updateUserDto: UpdateUserDto,
-  // ) {
-  //   return await this.usersRepository.update({
-  //     userId
-  //   }, {
-  //     loyatyRefreshToken: updateUserDto.loyatyRefreshToken,
-  //   });
+    let url = `${process.env.LOYALTY_API}/membership/mylist?orderField=membershipName&order=ASC&page=0&size=10&pricingType=1&statuses=0&uvrstatuses=1,0&vbstatuses=0,2&categories=`;
+    
+    let rst = null;
 
-  // }
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+    await axios.get(url).then(function (response) {
+      rst = response.data;
+    }).catch((response) => {
+      console.log(response);
+    });
+
+
+    rst.data.forEach(async element => {
+      let membershipDto: CreateMembershipDto = { ...element };
+      const membership = await this.findOneByNftBlockIdAndVoucherContractAddress(membershipDto.nftBlockId, membershipDto.membershipContractAddress);
+      if (membership) {
+        this.update(membership.id, membershipDto);
+      } else {
+        this.create(membershipDto);
+      }
+      console.log(membershipDto);
+    });
+    return rst;
+
+  }
+
+
+  async findOneByNftBlockIdAndVoucherContractAddress(nftBlockId: string, membershipContractAddress: string) {
+    const voucher = await this.membershipRepository.findOneBy({ nftBlockId: nftBlockId, membershipContractAddress: membershipContractAddress });
+    return voucher;
+  }
+
+
+  async update(
+    id,
+    membershipDto: CreateMembershipDto,
+  ) {
+
+    return await this.membershipRepository.update({
+      id
+    },
+      {
+        membershipId: membershipDto.membershipId,
+        membershipImageUrl: membershipDto.membershipImageUrl,
+        membershipDescription: membershipDto.membershipDescription,
+        membershipContractSymbol: membershipDto.membershipContractSymbol,
+        membershipName: membershipDto.membershipName,
+        membershipContractAddress: membershipDto.membershipContractAddress,
+        nftBlockId: membershipDto.nftBlockId,
+        nftBlockMintedBlockAddress: membershipDto.nftBlockMintedBlockAddress,
+        userId: membershipDto.userId,
+        brandId: membershipDto.brandId,
+
+      }
+    );
+  }
+
 }
 
 

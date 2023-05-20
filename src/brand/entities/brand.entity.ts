@@ -15,12 +15,17 @@ export class Brand {
   @Column({ nullable: true })
   brandLogoUrl?: string;
 
-  // @Column({ nullable: true })
-  // userId?: string;
+  @Column({ nullable: true })
+  userId?: string;
 
-  @OneToOne(type => User) @JoinColumn() 
-  user: User
+  @Column({ nullable: true })
+  roleName?: string;
 
+  @Column({ nullable: true })
+  brandStaffId?: string;
+  
+  // @OneToOne(type => User) @JoinColumn() 
+  // user: User
 
   @Column({ nullable: true })
   createdAt?: Date;

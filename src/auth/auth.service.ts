@@ -5,16 +5,21 @@ import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 //import { ConfigService } from '@nestjs/config';
 import { AuthDto } from './dto/auth.dto';
+import { decode } from 'punycode';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async getLoyaltyUser(wallet: string, hash: string) {
-    return this.usersService.getLoyaltyUser(wallet, hash);
+    const user = await this.usersService.getLoyaltyUser(wallet, hash);
+    Logger.log("===========================", user.userId, user.walletAddress);
+    const tokens = await this.getTokens(user.userId, user.walletAddress);
+    await this.updateRefreshToken(user.userId, tokens.refreshToken);
+    return tokens;
   }
 
   async requesLoyaltyLogin(wallet: string) {
@@ -30,35 +35,33 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    Logger.log("newUser===================",createUserDto);
+    Logger.log("newUser===================", createUserDto);
     // Hash password
-   // const hash = await this.hashData(createUserDto.password);
+    // const hash = await this.hashData(createUserDto.password);
     const newUser = await this.usersService.create({
       ...createUserDto,
     });
 
-    Logger.log("created user ===================",createUserDto);
-
-
+    Logger.log("created user ===================", createUserDto);
     const tokens = await this.getTokens(newUser.userId, newUser.walletAddress);
     await this.updateRefreshToken(newUser.userId, tokens.refreshToken);
     return tokens;
   }
 
-	async signIn(data: AuthDto) {
+  async signIn(data: AuthDto) {
     // Check if user exists
     const user = await this.usersService.getByWallet(data.walletAddress);
     Logger.log("user ==============", user);
     if (!user) throw new BadRequestException('User does not exist');
     //const passwordMatches = await argon2.verify(user.password, data.password);
     //if (!passwordMatches)
-     // throw new BadRequestException('Password is incorrect');
+    // throw new BadRequestException('Password is incorrect');
     const tokens = await this.getTokens(user.userId, user.walletAddress);
-    await this.updateRefreshToken(user.userId, tokens.refreshToken);
+    // await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 
-	async logout(userId: string) {
+  async logout(userId: string) {
     return this.usersService.update(userId, { refreshToken: null });
   }
 
@@ -68,12 +71,11 @@ export class AuthService {
 
   async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedRefreshToken = await this.hashData(refreshToken);
-    await this.usersService.update(userId, {
-      refreshToken: hashedRefreshToken,
-    });
+    await this.usersService.updateRefreshToken(userId, hashedRefreshToken);
   }
 
   async getTokens(userId: string, username: string) {
+    Logger.log("userId ==========================", userId);
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -81,7 +83,7 @@ export class AuthService {
           username,
         },
         {
-          secret:  process.env.JWT_ACCESS_SECRET,//this.configService.get<string>('JWT_ACCESS_SECRET'),
+          secret: process.env.JWT_ACCESS_SECRET,//this.configService.get<string>('JWT_ACCESS_SECRET'),
           expiresIn: '15m',
         },
       ),
@@ -101,6 +103,11 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  async decode(token: string) {
+    const jwt = token.replace('Bearer ', '');
+    return this.jwtService.decode(jwt, { json: true });
   }
 
   async refreshTokens(userId: string, refreshToken: string) {

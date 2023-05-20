@@ -24,7 +24,10 @@ export class User {
   refreshToken?: string;
 
   @Column({ nullable: true })
-  loyatyRefreshToken?: string;
+  loyaltyRefreshToken?: string;
+
+  @Column({ nullable: true })
+  loyaltyToken?: string;
 
   @Column({ nullable: true })
   nonce?: string;

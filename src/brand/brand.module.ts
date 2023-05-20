@@ -6,11 +6,15 @@ import { BrandController } from './brand.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Brand } from './entities/brand.entity';
 
+import { UserService } from '../user/user.service';
+// import { JwtService } from '@nestjs/jwt';
+ import { User } from 'src/user/entities/user.entity';
+
 @Module({
   controllers: [BrandController],
-  providers: [BrandService],
+  providers: [BrandService, UserService],
   imports: [ 
-    TypeOrmModule.forFeature([Brand]),
+    TypeOrmModule.forFeature([Brand, User]),
   ],
 })
 export class BrandModule {}

@@ -1,6 +1,8 @@
 export class BaseBrandDto {
-    name: string
-    walletAddress: string
-    contractName?: string
-    contractAddress?: string
- }
+    brandName?: string
+    brandId?: string
+    brandLogoUrl?: string
+    userId?: string
+    roleName?: string
+    brandStaffId?: string
+}

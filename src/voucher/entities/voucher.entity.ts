@@ -27,19 +27,30 @@ export class Voucher {
   @Column({ nullable: true })
   voucherImageUrl?: string;
 
-  // @Column({ nullable: true })
-  // brandId: string;
+  @Column({ nullable: true })
+  voucherContractSymbol?: string;
 
-  // @Column({ nullable: true })
-  // userId?: string;
+  @Column({ nullable: true })
+  nftBlockId?: string;
 
-  @OneToOne(type => Brand) @JoinColumn()
-  brand: Brand
 
-  // @Column({ nullable: true })
-  // userId?: string;
-  @OneToOne(type => User) @JoinColumn()
-  user: User
+  @Column({ nullable: true })
+  nftBlockMintedBlockAddress?: string;
+
+
+  @Column({ nullable: true })
+  brandId: string;
+
+  @Column({ nullable: true })
+  userId?: string;
+
+  // @OneToOne(type => Brand) @JoinColumn()
+  // brand: Brand
+
+  // // @Column({ nullable: true })
+  // // userId?: string;
+  // @OneToOne(type => User) @JoinColumn()
+  // user: User
 
   @Column({ nullable: true })
   createdAt?: Date;

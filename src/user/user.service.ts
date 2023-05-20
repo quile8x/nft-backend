@@ -60,7 +60,7 @@ export class UserService {
   ) { }
 
 
-  async getLoyaltyUser( wallet: string, hash: string){
+  async getLoyaltyUser(wallet: string, hash: string) {
 
     const data = {
       wallet: wallet,
@@ -71,34 +71,65 @@ export class UserService {
     const options = {
       headers: { "content-type": "application/json" }
     }
-    let rst =  null;
+    let rst = null;
     let userObj: CreateUserDto = null;
     await axios.post(url, data, options).then(function (response) {
       rst = response.data;
-      const {user, refreshToken} = rst;
-      userObj =  {... user};
-      userObj.loyatyRefreshToken = refreshToken;
-
-      this.create(userObj);
-
+      const { user, token, refreshToken } = rst;
+      userObj = { ...user };
+      userObj.loyaltyRefreshToken = refreshToken;
+      userObj.loyaltyToken = token;
+      userObj.walletAddress = user.walletAddress;
       console.log(rst);
     }).catch((response) => {
       console.log(response);
     });
+
+
+    if (userObj) {
+      const user = await this.getByID(userObj.userId)
+      if (user) {
+        await this.updateLoyaltyToken(user.userId, userObj);
+
+      } else {
+        await this.create(userObj);
+      }
+
+    }
+
     return userObj;
 
   }
 
-  async requesLoyaltyLogin( wallet: string){
-    const data =  {
-      wallet: wallet 
-      }
+  async requesLoyaltyLogin(wallet: string) {
+    const data = {
+      wallet: wallet
+    }
     let url = `${process.env.LOYALTY_API}/auth/request-login`;
     const options = {
       headers: { "content-type": "application/json" }
     }
-    let rst =  null;
-  
+    let rst = null;
+
+    await axios.post(url, data, options).then(function (response) {
+      rst = response.data;
+    }).catch((response) => {
+      console.log(response);
+    });
+    return rst;
+  }
+
+
+  async refeshLoyaltyToken(refreshToken: string) {
+    const data = {
+      refreshToken: refreshToken
+    }
+    let url = `${process.env.LOYALTY_API}/auth/refreshtoken`;
+    const options = {
+      headers: { "content-type": "application/json" }
+    }
+    let rst = null;
+
     await axios.post(url, data, options).then(function (response) {
       rst = response.data;
     }).catch((response) => {
@@ -141,10 +172,11 @@ export class UserService {
 
   async getByID(userId: string) {
     const user = await this.usersRepository.findOneBy({ userId: userId });
-    if (user) {
-      return user;
-    }
-    throw new HttpException('User with this user ID does not exist', HttpStatus.NOT_FOUND);
+    return user;
+    // if (user) {
+    //   return user;
+    // }
+    //throw new HttpException('User with this user ID does not exist', HttpStatus.NOT_FOUND);
   }
 
   async getByWallet(walletAddress: string) {
@@ -152,7 +184,7 @@ export class UserService {
     return user;
   }
 
-  async create(userData: CreateUserDto) {
+  public async create(userData: CreateUserDto) {
     Logger.log("userData===============", userData);
     const newUser = await this.usersRepository.create(userData);
     Logger.log("userData===============", newUser);
@@ -164,11 +196,40 @@ export class UserService {
     userId,
     updateUserDto: UpdateUserDto,
   ) {
+
     return await this.usersRepository.update({
       userId
     }, {
-      loyatyRefreshToken: updateUserDto.loyatyRefreshToken,
+      //refreshToken: updateUserDto.refreshToken,
+      loyaltyRefreshToken: updateUserDto.loyaltyRefreshToken,
+      loyaltyToken: updateUserDto.loyaltyToken
     });
 
   }
+
+  async updateLoyaltyToken(
+    userId,
+    updateUserDto: UpdateUserDto,
+  ) {
+    return await this.usersRepository.update({
+      userId
+    }, {
+      loyaltyRefreshToken: updateUserDto.loyaltyRefreshToken,
+      loyaltyToken: updateUserDto.loyaltyToken
+    });
+  }
+
+  async updateRefreshToken(
+    userId,
+    refreshToken: string,
+  ) {
+    return await this.usersRepository.update({
+      userId
+    }, {
+      refreshToken: refreshToken
+    });
+
+  }
+
+
 }

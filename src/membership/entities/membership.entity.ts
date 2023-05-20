@@ -20,21 +20,35 @@ export class Membership {
   @Column({ nullable: true })
   membershipImageUrl?: string;
 
+  @Column({ nullable: true })
+  brandId: string;
+
+  @Column({ nullable: true })
+  userId?: string;
+
+  @Column({ nullable: true })
+  membershipContractSymbol?: string;
+
+  @Column({ nullable: true })
+  membershipContractAddress?: string;
+
+
+  @Column({ nullable: true })
+  nftBlockId?: string;
+
+  @Column({ nullable: true })
+  nftBlockMintedBlockAddress?: string;
+
+
   // @Column({ nullable: true })
   // brandId: string;
+  // @OneToOne(type => Brand) @JoinColumn()
+  // brand: Brand
 
-  // @Column({ nullable: true })
-  // userId?: string;
-
-  // @Column({ nullable: true })
-  // brandId: string;
-  @OneToOne(type => Brand) @JoinColumn()
-  brand: Brand
-
-  // @Column({ nullable: true })
-  // userId?: string;
-  @OneToOne(type => User) @JoinColumn()
-  user: User
+  // // @Column({ nullable: true })
+  // // userId?: string;
+  // @OneToOne(type => User) @JoinColumn()
+  // user: User
 
 
   @Column({ nullable: true })
